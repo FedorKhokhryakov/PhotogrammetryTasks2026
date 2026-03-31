@@ -8,3 +8,4 @@ cmake -S . -B _build -DCMAKE_INSTALL_PREFIX="$INSTALL_PREFIX"
 if ($LASTEXITCODE -ne 0) { throw "cmake configure failed" }
 cmake --install _build
 if ($LASTEXITCODE -ne 0) { throw "cmake install failed" }
+cd $env:GITHUB_WORKSPACE
