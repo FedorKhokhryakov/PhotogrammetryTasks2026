@@ -1,12 +1,16 @@
 $ErrorActionPreference = "Stop"
-
 $INSTALL_PREFIX = "C:\ceres-solver220"
 
-# Install dependencies via vcpkg (pre-installed on windows-2022 runners)
+# Install dependencies via vcpkg
 cd C:\vcpkg
 git pull
+if ($LASTEXITCODE -ne 0) { throw "git pull failed" }
+
 .\bootstrap-vcpkg.bat
+if ($LASTEXITCODE -ne 0) { throw "bootstrap-vcpkg failed" }
+
 .\vcpkg install eigen3 glog gflags suitesparse --triplet x64-windows
+if ($LASTEXITCODE -ne 0) { throw "vcpkg install failed" }
 
 # Build Ceres
 cd $env:GITHUB_WORKSPACE
@@ -19,6 +23,10 @@ cmake -S . -B build `
     -DCMAKE_TOOLCHAIN_FILE="C:\vcpkg\scripts\buildsystems\vcpkg.cmake" `
     -DVCPKG_TARGET_TRIPLET="x64-windows" `
     -DUSE_CUDA=OFF
+if ($LASTEXITCODE -ne 0) { throw "cmake configure failed" }
 
 cmake --build build --config Release --parallel
+if ($LASTEXITCODE -ne 0) { throw "cmake build failed" }
+
 cmake --install build --config Release
+if ($LASTEXITCODE -ne 0) { throw "cmake install failed" }
